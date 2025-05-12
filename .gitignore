@@ -1,1 +1,7 @@
 ml_scratch/
+experimentation/
+.pytest_cache
+__pycache__
+.env/
+.vscode/
+AtomML.egg-info
