@@ -1,34 +1,43 @@
+# pytest tests/test_losses.py
 import numpy as np
+from typing import Union, Sequence
 from core.tensor import Tensor
-from typing import Union
 
-Arr = Union[Tensor, np.ndarray]
+Arr = Union[Tensor, np.ndarray, Sequence[float]]
 
-def _to_numpy(x):
+def _to_tensor(x: Arr) -> Tensor:
     if isinstance(x, Tensor):
-        return x.data
-    return np.array(x)
+        return x
+    arr = np.array(x, dtype=float)
+    return Tensor(arr, requires_grad=False)
 
 # MSE
-def MSE(y_true: Tensor, y_pred: Tensor) -> Tensor:
-    diff = y_true - y_pred
-    loss = (diff * diff).sum() * (1.0 / y_true.data.shape[0])
-    return loss
+def MSE(y_true: Arr, y_pred: Arr) -> Tensor:
+    yt = _to_tensor(y_true)
+    yp = _to_tensor(y_pred)
+    diff = yt - yp
+    return (diff * diff).sum() * (1.0 / yt.data.shape[0])
 
-# RMSE
+# RMSE 
 def RMSE(y_true: Arr, y_pred: Arr) -> Tensor:
-    return Tensor(np.sqrt(MSE(y_true, y_pred)), requires_grad = True)
+    mse = MSE(y_true, y_pred)
+    return mse ** Tensor(0.5, requires_grad = False)
 
 # MAE
 def MAE(y_true: Arr, y_pred: Arr) -> Tensor:
-    y_true = _to_numpy(y_true)
-    y_pred = _to_numpy(y_pred)
-    return Tensor(np.mean(np.abs(y_true - y_pred)), requires_grad = True)
+    yt = _to_tensor(y_true)
+    yp = _to_tensor(y_pred)
+    diff = yt - yp
+    # abs(x) = ReLU(x) + ReLU(-x)
+    abs_diff = diff.relu() + (-diff).relu()
+    return abs_diff.sum() * (1.0 / yt.data.shape[0])
 
-# R-squared error
-def R2(y_true: Arr, y_pred: Arr) -> float:
-    y_true = _to_numpy(y_true)
-    y_pred = _to_numpy(y_pred)
-    ss_res = np.sum((y_true - y_pred) ** 2)
-    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
-    return Tensor(1 - ss_res / ss_tot, requires_grad = True)
+# R-squared loss
+def R2(y_true: Arr, y_pred: Arr) -> Tensor:
+    yt = _to_tensor(y_true)
+    yp = _to_tensor(y_pred)
+    res = (yt - yp) ** Tensor(2.0, requires_grad=False)
+    ss_res = res.sum()
+    mean_true = Tensor(float(np.mean(yt.data)), requires_grad = False)
+    tot = ((yt - mean_true) ** Tensor(2.0, requires_grad = False)).sum()
+    return Tensor(1.0, requires_grad=False) - ss_res / tot
