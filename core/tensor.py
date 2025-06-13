@@ -201,6 +201,30 @@ class Tensor:
 
         out._backward = _backward
         return out
+    
+    def softmax(self, dim: int = -1):
+        x = self.data
+        max_vals = np.max(x, axis = dim, keepdims = True)
+        exp_shift = np.exp(x - max_vals)
+
+        sums = np.sum(exp_shift, axis = dim, keepdims = True)
+        probs = exp_shift / sums
+
+        out = Tensor(probs, 
+                     _children = (self,),
+                     _op = "softmax",\
+                     requires_grad = self.requires_grad)
+
+        def _backward():
+            if not self.requires_grad:
+                return
+            g = out.grad # upstream grad
+            dot = np.sum(g * probs, axis = dim, keepdims = True)
+            grad_input = probs * (g - dot) 
+            self.grad += grad_input
+
+        out._backward = _backward
+        return out
 
     def sum(self):
         out = Tensor(self.data.sum(),
