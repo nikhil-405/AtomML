@@ -38,7 +38,14 @@ pip install -r requirements.txt
 pip install -e . 
 ```
 
-If you wish to test the Library, you can run the tests using pytest:
+
+For testing the entire library, you can run:
+
+```bash
+pytest tests
+```
+
+If you wish to test individual components of the Library, you can run the tests using pytest:
 
 ```bash
 pytest tests/<test_file>.py
