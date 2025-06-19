@@ -12,7 +12,7 @@ def test_kmeans_pp(random_state = 123):
 
     # Custom Implementation
     km = KMeansPlusPlus(X, alpha=1)
-    centers, clusters = km.cluster(k = 4, max_iters = 100)
+    centers, _ = km.cluster(k = 4, max_iters = 100)
 
     # cluster assignment
     labels_pred = np.zeros(X.shape[0], dtype = int)
