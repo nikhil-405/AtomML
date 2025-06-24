@@ -53,9 +53,8 @@ pytest tests/<test_file>.py
 
 ## References
 The library is inspired by various sources, including but not limited to:
+- [Andrej Karpathy's micrograd](https://github.com/karpathy/micrograd)
 
-- Scikit-learn documentation and Source Code: [here](https://github.com/scikit-learn/scikit-learn/)
+- [Scikit-learn Source Code](https://github.com/scikit-learn/scikit-learn/)
 
-- Torch Source Code: [here](https://github.com/pytorch/pytorch/tree/main)
-
-- Andrej Karpathy's micrograd: [here](https://github.com/karpathy/micrograd)
+- [Torch Source Code](https://github.com/pytorch/pytorch/)
