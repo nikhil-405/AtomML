@@ -56,7 +56,7 @@ class LSH:
             search_radius += 1  # Increase search radius
 
         if candidate_counts:
-            sorted_candidates = sorted(candidate_counts.items(), key=lambda x: -x[1])[:k]
+            sorted_candidates = sorted(candidate_counts.items(), key=lambda x: -x[1])[:self.k]
             return [point for point, _ in sorted_candidates]
         else:
             return []
