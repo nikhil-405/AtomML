@@ -50,3 +50,12 @@ If you wish to test individual components of the Library, you can run the tests 
 ```bash
 pytest tests/<test_file>.py
 ```
+
+## References
+The library is inspired by various sources, including but not limited to:
+
+- Scikit-learn documentation and Source Code: [here](https://github.com/scikit-learn/scikit-learn/)
+
+- Torch Source Code: [here](https://github.com/pytorch/pytorch/tree/main)
+
+- Andrej Karpathy's micrograd: [here](https://github.com/karpathy/micrograd)

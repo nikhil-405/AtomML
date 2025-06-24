@@ -1,2 +1,2 @@
-from .exact import KNN
-from .approximate import KDTree, LSH
+from .exact import KNN, KDTree
+from .approximate import LSH

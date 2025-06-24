@@ -1,7 +1,7 @@
 import numpy as np
 
 class Tensor:
-    def __init__(self, data, _children=(), _op="", requires_grad=False):
+    def __init__(self, data, _children = (), _op = "", requires_grad = False):
         self.data = np.array(data, dtype=float)
         self.requires_grad = requires_grad
 
@@ -24,7 +24,7 @@ class Tensor:
     def _unbroadcast(grad, shape):
         """ Sum gradients to match the target shape after broadcasting"""
         while grad.ndim > len(shape):
-            grad = grad.sum(axis=0)
+            grad = grad.sum(axis = 0)
         # Sum along broadcasted axes
         for i, dim in enumerate(shape):
             if dim == 1:
@@ -175,11 +175,38 @@ class Tensor:
         out._backward = _backward
         return out
 
+    def sum(self):
+        out = Tensor(self.data.sum(),
+                     (self,),
+                     "sum",
+                     requires_grad = self.requires_grad)
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += out.grad * np.ones_like(self.data)
+
+        out._backward = _backward
+        return out
+
+    def mean(self):
+        out = Tensor(self.data.mean(),
+                     (self,),
+                     "mean",
+                     requires_grad = self.requires_grad)
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += out.grad * np.ones_like(self.data) / self.data.size
+
+        out._backward = _backward
+        return out
+
+    # Activation functions
     def relu(self):
         out = Tensor(np.maximum(0, self.data),
-                     (self,),
-                     "ReLU",
-                     requires_grad=self.requires_grad)
+                    (self,),
+                    "ReLU",
+                    requires_grad = self.requires_grad)
 
         def _backward():
             if self.requires_grad:
@@ -193,7 +220,7 @@ class Tensor:
         out = Tensor(sig,
                      (self,),
                      "sigmoid",
-                     requires_grad=self.requires_grad)
+                     requires_grad = self.requires_grad)
 
         def _backward():
             if self.requires_grad:
@@ -202,7 +229,7 @@ class Tensor:
         out._backward = _backward
         return out
     
-    def softmax(self, dim: int = -1):
+    def softmax(self, dim = -1):
         x = self.data
         max_vals = np.max(x, axis = dim, keepdims = True)
         exp_shift = np.exp(x - max_vals)
@@ -212,12 +239,13 @@ class Tensor:
 
         out = Tensor(probs, 
                      _children = (self,),
-                     _op = "softmax",\
+                     _op = "softmax",
                      requires_grad = self.requires_grad)
 
         def _backward():
             if not self.requires_grad:
                 return
+            
             g = out.grad # upstream grad
             dot = np.sum(g * probs, axis = dim, keepdims = True)
             grad_input = probs * (g - dot) 
@@ -226,35 +254,40 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def sum(self):
-        out = Tensor(self.data.sum(),
+    def leaky_relu(self, alpha = 0.01):
+        out = Tensor(np.where(self.data > 0, self.data, alpha * self.data),
                      (self,),
-                     "sum",
-                     requires_grad=self.requires_grad)
+                     "leaky_relu",
+                     requires_grad = self.requires_grad)
 
         def _backward():
             if self.requires_grad:
-                self.grad += out.grad * np.ones_like(self.data)
+                grad = out.grad
+                grad_self = np.where(self.data > 0, grad, alpha * grad)
+                self.grad += grad_self
 
         out._backward = _backward
         return out
 
-    def mean(self):
-        out = Tensor(self.data.mean(),
+    # https://arxiv.org/abs/1606.08415
+    def gelu(self):
+        out = Tensor(self.data * self.data.sigmoid(),
                      (self,),
-                     "mean",
+                     "gelu",
                      requires_grad=self.requires_grad)
 
         def _backward():
             if self.requires_grad:
-                self.grad += out.grad * np.ones_like(self.data) / self.data.size
+                grad = out.grad
+                self.grad += grad * (self.data.sigmoid() + self.data * grad.sigmoid())
 
         out._backward = _backward
         return out
 
+    # backprop
     def backward(self):
         if not self.requires_grad:
-            raise RuntimeError("Cannot call backwards on Tensors that do not require gradients")
+            raise RuntimeError("Cannot call backwards on Tensors that do not require gradients!!")
 
         topo = []
         visited = set()
