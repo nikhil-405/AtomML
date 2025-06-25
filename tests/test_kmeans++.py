@@ -12,7 +12,7 @@ def test_kmeans_pp(random_state = 123):
     )
 
     # Custom Implementation
-    km = KMeansPlusPlus(X, alpha=1)
+    km = KMeansPlusPlus(X, alpha=1, random_state = random_state)
     centers, _ = km.cluster(k = 4, max_iters = 100)
 
     # cluster assignment
