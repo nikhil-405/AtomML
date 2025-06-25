@@ -6,6 +6,7 @@ from clustering import KMeansPlusPlus
 
 def test_kmeans_pp(random_state = 123):
     # synthetic data
+    np.random.seed(random_state)
     X, _ = __import__('sklearn.datasets', fromlist = ['make_blobs']).make_blobs(
         n_samples = 300, centers = 4, cluster_std = 0.60, random_state = random_state
     )
