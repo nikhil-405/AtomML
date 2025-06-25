@@ -1,4 +1,9 @@
 # AtomML
+
+[![CI](https://github.com/nikhil-405/AtomML/actions/workflows/python-app.yml/badge.svg)](https://github.com/nikhil-405/AtomML/actions/workflows/python-app.yml)
+[![Coverage Status](https://codecov.io/gh/nikhil-405/AtomML/branch/main/graph/badge.svg)](https://codecov.io/gh/nikhil-405/AtomML)
+
+
 AtomML is a lightweight, modular machine-learning library built from scratch on NumPy and Pandas. It includes simple and highly unoptimized implementations of various Machine Learning algorithms ```from scratch``` without the use of scikit-learn, TensorFlow, or PyTorch.
 
 ## Installation
