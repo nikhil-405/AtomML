@@ -9,8 +9,8 @@ class Adam(Optimizer):
         self.lr = lr
         self.beta1, self.beta2 = betas
         self.eps = eps
-        self.m = {p: 0 for p in self.params}
-        self.v = {p: 0 for p in self.params}
+        self.m = {p: np.zeros_like(p.data) for p in self.params}
+        self.v = {p: np.zeros_like(p.data) for p in self.params}
         self.t = 0
 
     def step(self):
@@ -26,7 +26,7 @@ class Adam(Optimizer):
             m_hat = m_new / (1 - self.beta1**self.t)
             v_hat = v_new / (1 - self.beta2**self.t)
 
-            p.data -= self.lr * m_hat / (np.sqrt(v_hat) + self.eps)
+            p.data -= (self.lr * m_hat / (np.sqrt(v_hat) + self.eps))
 
             self.m[p] = m_new
             self.v[p] = v_new

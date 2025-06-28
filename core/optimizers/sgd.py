@@ -8,17 +8,18 @@ class SGD(Optimizer):
         super().__init__(params)
         self.lr = lr
         self.momentum = momentum
-        self.velocities = {p: 0 for p in self.params}
+        self.velocities = {p: np.zeros_like(p.data) for p in self.params}
 
     def step(self):
         for p in self.params:
             if p.grad is None:
                 continue
-            if self.momentum:
+
+            if self.momentum != 0:
                 v_prev = self.velocities[p]
                 v_new = self.momentum * v_prev + (1 - self.momentum) * p.grad
                 self.velocities[p] = v_new
-                update = v_new
+                update = self.lr * v_new
             else:
-                update = p.grad
-            p.data -= self.lr * update
+                update = self.lr * p.grad
+            p.data -= update
