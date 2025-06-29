@@ -57,6 +57,7 @@ class LSH:
 
         if candidate_counts:
             sorted_candidates = sorted(candidate_counts.items(), key=lambda x: -x[1])[:self.k]
-            return [point for point, _ in sorted_candidates]
+            # return np.array([point for point, _ in sorted_candidates])
+            return np.array([self.datapoints[idx] for idx, _ in sorted_candidates])
         else:
-            return []
+            return np.array([]).reshape(0, self.dim) 

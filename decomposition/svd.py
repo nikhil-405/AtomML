@@ -6,11 +6,12 @@ class SVD:
         self.n_features = None
         self.n_samples = None
         self.data = None
+        self.mean = None
         self.U = None
         self.V = None
         self.sigma = None
 
-
+    # iterative approach
     def qr_eigendecomposition(self, A, max_iterations = 100, tol = 1e-8):
         n = A.shape[0]
         Q_acc = np.eye(n)
@@ -37,9 +38,10 @@ class SVD:
         self.data = x # (n, m)
         self.n_samples = x.shape[0]
         self.n_features = x.shape[1]
+        self.mean = np.mean(x, axis = 0)
+        x_centered = x - self.mean
 
-        x_centered = x - np.mean(x, axis = 0)
-
+        # X_transpose * X
         if self.n_samples >= self.n_features: # n > m
             A = np.dot(x_centered.T, x_centered)
             V, sigma_squared = self.qr_eigendecomposition(A)
@@ -55,6 +57,7 @@ class SVD:
                 else:
                     self.U[:, i] = np.zeros(self.n_samples)
 
+        # X * X_transposed
         else:
             A = np.dot(x_centered, x_centered.T)
             U, sigma_squared = self.qr_eigendecomposition(A)
@@ -75,8 +78,8 @@ class SVD:
     def transform(self, x):
         if self.V is None:
             raise ValueError("Call fit method first")
-        x_centered = x - np.mean(self.data, axis=0)
-        return np.dot(x_centered, self.V)
+        x_centered = x - self.mean
+        return np.dot(x_centered, self.V[:, :self.n_components])
     
     def fit_transform(self, x):
         self.fit(x)

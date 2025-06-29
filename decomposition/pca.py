@@ -18,7 +18,11 @@ class PCA:
         
         self.mean = np.mean(x, axis=0)
         self.std = np.std(x, axis=0)
-        self.data = (x - self.mean) / self.std
+
+        # apparently sklearn uses centered data without standardization, so I will be using the same
+        # optionally, add standardize as a boolean parameter
+        # ddof = 1 also causes issues
+        self.data = (x - self.mean)
         
         self.cov = np.cov(self.data, rowvar=False)
         
@@ -39,7 +43,7 @@ class PCA:
         if not hasattr(self, 'eigen_values') or self.eigen_values is None:
             raise ValueError("Call fit method before calling the transform method")
         
-        x_std = (x - self.mean) / self.std
+        x_std = (x - self.mean)
         return np.dot(x_std, self.eigen_vectors[:, :self.n_components])
     
     def get_covariance(self):

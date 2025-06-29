@@ -60,6 +60,8 @@ pytest tests/<test_file>.py
 The library is inspired by various sources, including but not limited to:
 - [Andrej Karpathy's micrograd](https://github.com/karpathy/micrograd)
 
+- [Deep Learning by Ian Goodfellow & co.](https://www.deeplearningbook.org/)
+
 - [Scikit-learn Source Code](https://github.com/scikit-learn/scikit-learn/)
 
 - [Torch Source Code](https://github.com/pytorch/pytorch/)
