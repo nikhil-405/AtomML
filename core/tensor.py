@@ -31,6 +31,9 @@ class Tensor:
                 grad = grad.sum(axis = i, keepdims = True)
         return grad
 
+    def __repr__(self):
+        return f"Tensor(data={self.data})"
+    
     def __add__(self, other):
         if not isinstance(other, Tensor):
             other = Tensor(other)
