@@ -6,7 +6,7 @@ import numpy as np
 # I. Goodfellow, Y. Bengio, and A. Courville, *Deep Learning*, Chapter 10: Sequence Modeling: Recurrent and Recursive Nets
 
 class RNN(BaseModule):
-    def __init__(self, input_size, hidden_size, num_layers = 1, bidirectional = False):
+    def __init__(self, input_size: int, hidden_size: int, num_layers: int = 1, bidirectional: bool = False):
         super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
